@@ -8,8 +8,8 @@ class ModulerizrJsRenderPlugin {
 
         throwErrorIfDelimitersAreNotValid(pluginconfig.delimiters);
     }
-    async apply(modulerizr) {
-        modulerizr.plugins.on('afterRender', async() => {
+    async apply(compiler) {
+        compiler.hooks.modulerizr_afterRender.tapPromise('ModulerizrJsRenderPlugin', async(modulerizr) => {
 
             return modulerizr.store.$each("$.src.*/[data-component-instance]", ($currentComp, currentFile, currentPath, i) => {
                 const embeddedComponentId = $currentComp.attr('data-component-instance');
