@@ -9,8 +9,8 @@ class ModulerizrJsRenderPlugin {
         throwErrorIfDelimitersAreNotValid(pluginconfig.delimiters);
     }
     apply(compiler) {
-        compiler.hooks.afterRenderModulerizr.tapPromise('ModulerizrJsRenderPlugin', (compilation, modulerizr) => {
-            modulerizr.store.$each("$.src.*/[data-component-instance]", ($currentComp, currentFile, currentPath, i) => {
+        compiler.hooks.afterRenderModulerizr.tapPromise('ModulerizrJsRenderPlugin', async(compilation, modulerizr) => {
+            await modulerizr.store.$each("$.src.*/[data-component-instance]", ($currentComp, currentFile, currentPath, i) => {
                 const embeddedComponentId = $currentComp.attr('data-component-instance');
                 const embeddedComponent = modulerizr.store.queryOne(`$.embeddedComponents.id_${embeddedComponentId}`);
                 const componentTemplate = modulerizr.store.queryOne(`$.component.id_${$currentComp.attr('id')}`);
