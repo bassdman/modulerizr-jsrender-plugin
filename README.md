@@ -1,1 +1,1 @@
-# modulerizr-jsrender-plugin
+# modulerizr-webpack-plugin

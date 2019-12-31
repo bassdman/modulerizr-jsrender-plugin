@@ -10,7 +10,7 @@ class ModulerizrJsRenderPlugin {
     }
     apply(compiler) {
         compiler.hooks.modulerizrAfterRender.tap('ModulerizrJsRenderPlugin', modulerizr => {
-            modulerizr.store.$each("$.src.*/[data-component-instance]", ($currentComp, currentFile, currentPath, i) => {
+            modulerizr.src.$each("[data-component-instance]", ($currentComp, currentFile, currentPath, i) => {
                 const embeddedComponentId = $currentComp.attr('data-component-instance');
                 const embeddedComponent = modulerizr.store.queryOne(`$.embeddedComponents.id_${embeddedComponentId}`);
                 const componentTemplate = modulerizr.store.queryOne(`$.component.id_${$currentComp.attr('id')}`);
