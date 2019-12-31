@@ -1,6 +1,6 @@
 {
     "name": "modulerizr-jsrender-plugin",
-    "version": "0.2.3-beta",
+    "version": "0.2.4-beta",
     "description": "Adds a template-rendering-syntax to modulerizr-components based on jsrender",
     "main": "index.js",
     "scripts": {
@@ -13,7 +13,7 @@
     ],
     "author": "Manuel Gelsen",
     "license": "MIT",
-    "dev-dependencies": {
+    "dependencies": {
         "jsrender": "^1.0.5"
     }
 }
