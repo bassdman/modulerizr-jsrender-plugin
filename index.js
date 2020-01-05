@@ -1,37 +1,32 @@
 const jsrender = require('jsrender');
 
-
 class ModulerizrJsRenderPlugin {
     constructor(pluginconfig = {}) {
-        this.internal = true;
         this.pluginconfig = pluginconfig;
 
         throwErrorIfDelimitersAreNotValid(pluginconfig.delimiters);
     }
     apply(compiler) {
-        compiler.hooks.modulerizrAfterRender.tap('ModulerizrJsRenderPlugin', modulerizr => {
-            modulerizr.src.$each("[data-component-instance]", ($currentComp, currentFile, currentPath, i) => {
-                const embeddedComponentId = $currentComp.attr('data-component-instance');
-                const embeddedComponent = modulerizr.store.queryOne(`$.embeddedComponents.id_${embeddedComponentId}`);
-                const componentTemplate = modulerizr.store.queryOne(`$.component.id_${$currentComp.attr('id')}`);
+        compiler.hooks.modulerizrFileRendered.tap('ModulerizrJsRenderPlugin', ($, file, modulerizr) => {
+            if (this.pluginconfig.delimiters) {
+                jsrender.views.settings.delimiters(this.pluginconfig.delimiters[0], this.pluginconfig.delimiters[1])
+            }
+            if (this.pluginconfig.allowCode) {
+                jsrender.views.settings.allowCode(this.pluginconfig.allowCode);
+            }
+            if (this.pluginconfig.debugMode) {
+                jsrender.views.settings.debugMode(this.pluginconfig.debugMode);
+            }
 
-                const params = Object.assign({}, embeddedComponent.attributes, componentTemplate.prerenderdata || {});
+            for (let embeddedComp of file.embeddedComponents) {
+                const $comp = $(`[data-component-instance="${embeddedComp.id}"]`);
+                const params = Object.assign({}, embeddedComp.attributes, embeddedComp.component.prerenderdata || {});
 
-                if (this.pluginconfig.delimiters) {
-                    jsrender.views.settings.delimiters(this.pluginconfig.delimiters[0], this.pluginconfig.delimiters[1])
-                }
-                if (this.pluginconfig.allowCode) {
-                    jsrender.views.settings.allowCode(this.pluginconfig.allowCode);
-                }
-                if (this.pluginconfig.debugMode) {
-                    jsrender.views.settings.debugMode(this.pluginconfig.debugMode);
-                }
-
-                const tmpl = jsrender.templates($currentComp.html().replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, "&")); // Compile template from string
+                const tmpl = jsrender.templates($comp.html().replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, "&")); // Compile template from string
                 const renderedTemplate = tmpl.render(params);
 
-                $currentComp.html(renderedTemplate);
-            });
+                $comp.html(renderedTemplate);
+            }
         });
     }
 }
